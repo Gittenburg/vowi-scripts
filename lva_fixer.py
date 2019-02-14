@@ -12,7 +12,9 @@ def handle_template(tpl):
 			tpl.get('wann').value = 'SS\n'
 		elif tpl.get('wann').value.strip() == 'Wintersemester':
 			tpl.get('wann').value = 'WS\n'
-	return 'fixe LVA-Daten'
+	if tpl.has('sprache'):
+		tpl.get('sprache').value = ','.join(s.title() for s in tpl.get('sprache').value.split(','))
+	return 'fixe LVA-Daten (lva_fixer.py)'
 
 def handle_page(page):
 	before = page.text()
