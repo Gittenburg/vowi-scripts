@@ -29,10 +29,12 @@ def ensure_enabled(site, scriptname=None):
 def diff(before, after):
 	print('\n'.join(difflib.unified_diff(before.splitlines(), str(after).splitlines())))
 
-def confirm(before, after, msg=None):
+def save(page, before, after, msg):
 	if str(before) == str(after):
 		return False
-	if msg:
-		print('msg: {}'.format(msg))
+	if type(msg) == list:
+		msg = ', '.join(msg)
+	print('msg: {}'.format(msg))
 	diff(before, after)
-	return input() == '' # enter confirms
+	if 'NOASK' in os.environ or input() == '':
+		page.save(str(after), msg)
