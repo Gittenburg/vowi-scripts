@@ -7,6 +7,8 @@ import difflib
 import mwclient
 import mwparserfromhell
 
+UNI_NAMESPACES = [3000, 3002, 3004, 3006, 3008]
+
 def getsite():
 	if 'ACCT' not in os.environ:
 		sys.exit('ACCT environment variable not set')
