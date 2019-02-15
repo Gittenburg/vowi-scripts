@@ -5,13 +5,16 @@ import argparse
 import mwparserfromhell
 
 import mwapp
+from mwapp import setparam
 
 def handle_template(tpl):
 	if tpl.has('wann'):
-		if tpl.get('wann').value.strip() == 'Sommersemester':
-			tpl.get('wann').value = 'SS\n'
-		elif tpl.get('wann').value.strip() == 'Wintersemester':
-			tpl.get('wann').value = 'WS\n'
+		if tpl.get('wann').value.strip() in ('Sommersemester', 'ss'):
+			setparam(tpl, 'wann', 'SS')
+		elif tpl.get('wann').value.strip() in ('Wintersemester', 'ws'):
+			setparam(tpl, 'wann', 'WS')
+		elif tpl.get('wann').value.strip() in ('Winter- und Sommersemester', 'Sommer- und Wintersemester'):
+			setparam(tpl, 'wann', 'beide')
 	if tpl.has('sprache'):
 		# titleize
 		tpl.get('sprache').value = ';'.join(s.title() for s in tpl.get('sprache').value.split(';'))
