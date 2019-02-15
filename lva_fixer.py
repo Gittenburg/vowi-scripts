@@ -7,7 +7,7 @@ import mwparserfromhell
 import mwapp
 from mwapp import setparam
 
-def handle_template(tpl):
+def handle_template(tpl, namespace=None):
 	if tpl.has('wann'):
 		if tpl.get('wann').value.strip() in ('Sommersemester', 'ss'):
 			setparam(tpl, 'wann', 'SS')
@@ -18,6 +18,12 @@ def handle_template(tpl):
 	if tpl.has('sprache'):
 		# titleize
 		tpl.get('sprache').value = ';'.join(s.title() for s in tpl.get('sprache').value.split(';'))
+	if tpl.has('tiss'):
+		if tpl.get('tiss').value.strip() == '1234567890':
+			tpl.remove('tiss')
+	if namespace == mwapp.NS_TU_WIEN:
+		pass
+
 	return 'fixe LVA-Daten (lva_fixer.py)'
 
 def handle_page(page):
@@ -25,7 +31,7 @@ def handle_page(page):
 	code = mwparserfromhell.parse(before)
 	templates = code.filter_templates(matches = lambda t: t.name.matches('LVA-Daten'))
 	if templates:
-		msg = handle_template(templates[0])
+		msg = handle_template(templates[0], page.namespace)
 		mwapp.save(page, before, str(code), msg)
 
 if __name__ == '__main__':
@@ -33,9 +39,10 @@ if __name__ == '__main__':
 	parser.add_argument('page', nargs='?')
 	args = parser.parse_args()
 	site = mwapp.getsite()
+	namespaces = site.namespaces
 	if args.page:
 		handle_page(site.pages[args.page])
 	else:
 		for page in site.categories['LVAs']:
-			if page.namespace in mwapp.UNI_NAMESPACES:
+			if mwapp.is_uni_ns(page.namespace):
 				handle_page(page)

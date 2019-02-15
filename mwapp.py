@@ -7,7 +7,13 @@ import difflib
 import mwclient
 import mwparserfromhell
 
-UNI_NAMESPACES = [3000, 3002, 3004, 3006]
+NS_TU_WIEN = 3000
+NS_UNI_WIEN = 3002
+NS_MU_WIEN = 3004
+NS_SONSTIGE = 3006
+
+def is_uni_ns(ns):
+	return ns in (NS_TU_WIEN, NS_UNI_WIEN, NS_MU_WIEN, NS_SONSTIGE)
 
 def getsite():
 	if 'ACCT' not in os.environ:
