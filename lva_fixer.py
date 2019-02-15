@@ -27,6 +27,11 @@ def handle_template(tpl, namespace=None):
 	if tpl.has('abteilung'):
 		set_param_value(tpl, 'abteilung', ';'.join([s.split('#')[0] for s in str(tpl.get('abteilung').value).replace('_', ' ').split(';')]))
 
+	if tpl.has('zuordnungen'):
+		rels = tpl.get('zuordnungen').value.filter_templates()
+		rels.sort(key=lambda x: x.get('1'))
+		tpl.get('zuordnungen').value = '\n' + '\n'.join([' '*4 + str(r) for r in rels]) + '\n'
+
 	return 'fixe LVA-Daten (lva_fixer.py)'
 
 def handle_page(page):
