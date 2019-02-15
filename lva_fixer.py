@@ -13,7 +13,8 @@ def handle_template(tpl):
 		elif tpl.get('wann').value.strip() == 'Wintersemester':
 			tpl.get('wann').value = 'WS\n'
 	if tpl.has('sprache'):
-		tpl.get('sprache').value = ','.join(s.title() for s in tpl.get('sprache').value.split(','))
+		# titleize
+		tpl.get('sprache').value = ';'.join(s.title() for s in tpl.get('sprache').value.split(';'))
 	return 'fixe LVA-Daten (lva_fixer.py)'
 
 def handle_page(page):

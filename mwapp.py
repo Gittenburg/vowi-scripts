@@ -40,3 +40,7 @@ def save(page, before, after, msg):
 	diff(before, after)
 	if 'NOASK' in os.environ or input() == '':
 		page.save(str(after), msg)
+
+def update_param(tpl, name, value):
+	oldval = tpl.get(name).value
+	tpl.get(name).value = ' '*oldval.startswith(' ') + value + '\n'
