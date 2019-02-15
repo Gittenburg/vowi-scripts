@@ -5,16 +5,16 @@ import argparse
 import mwparserfromhell
 
 import mwapp
-from mwapp import set_param_val, set_param_name
+from mwapp import set_param_value, set_param_name
 
 def handle_template(tpl, namespace=None):
 	if tpl.has('wann'):
 		if tpl.get('wann').value.strip() in ('Sommersemester', 'ss'):
-			set_param_val(tpl, 'wann', 'SS')
+			set_param_value(tpl, 'wann', 'SS')
 		elif tpl.get('wann').value.strip() in ('Wintersemester', 'ws'):
-			set_param_val(tpl, 'wann', 'WS')
+			set_param_value(tpl, 'wann', 'WS')
 		elif tpl.get('wann').value.strip() in ('Winter- und Sommersemester', 'Sommer- und Wintersemester'):
-			set_param_val(tpl, 'wann', 'beide')
+			set_param_value(tpl, 'wann', 'beide')
 	if tpl.has('sprache'):
 		# titleize
 		tpl.get('sprache').value = ';'.join(s.title() for s in tpl.get('sprache').value.split(';'))
@@ -24,6 +24,8 @@ def handle_template(tpl, namespace=None):
 	if tpl.has('institut'):
 		if not tpl.has('abteilung') and not '[' in tpl.get('institut').value:
 			set_param_name(tpl, 'institut', 'abteilung')
+	if tpl.has('abteilung'):
+		set_param_value(tpl, 'abteilung', ';'.join([s.split('#')[0] for s in str(tpl.get('abteilung').value).replace('_', ' ').split(';')]))
 
 	return 'fixe LVA-Daten (lva_fixer.py)'
 

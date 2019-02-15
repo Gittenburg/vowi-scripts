@@ -47,9 +47,9 @@ def save(page, before, after, msg):
 	if 'NOASK' in os.environ or input() == '':
 		page.save(str(after), msg)
 
-def set_param_val(tpl, name, value):
+def set_param_value(tpl, name, value):
 	oldval = tpl.get(name).value
-	tpl.get(name).value = ' '*oldval.startswith(' ') + value + '\n'
+	tpl.get(name).value = ' '*(oldval.startswith(' ') and not value.startswith(' ')) + value + '\n'*(not value.endswith('\n'))
 
 def set_param_name(tpl, name, newname):
-	tpl.get(name).name.replace(name, newname)
+	tpl.get(name).name = str(tpl.get(name).name).replace(name, newname)
