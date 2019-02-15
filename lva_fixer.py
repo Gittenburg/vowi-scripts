@@ -40,12 +40,14 @@ def handle_page(page):
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('page', nargs='?')
+	parser.add_argument('-c', dest='category', default='LVAs')
 	args = parser.parse_args()
 	site = mwapp.getsite()
 	namespaces = site.namespaces
 	if args.page:
 		handle_page(site.pages[args.page])
 	else:
-		for page in site.categories['LVAs']:
+		for page in site.categories[args.category]:
+			print(page.name)
 			if mwapp.is_uni_ns(page.namespace):
 				handle_page(page)
