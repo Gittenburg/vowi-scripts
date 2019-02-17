@@ -54,3 +54,7 @@ def set_param_value(tpl, name, value):
 
 def set_param_name(tpl, name, newname):
 	tpl.get(name).name = str(tpl.get(name).name).replace(name, newname)
+
+def santitle(a):
+	a = str(a).replace('_', ' ').strip()
+	return a[0].lower() + a[1:]
