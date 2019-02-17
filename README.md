@@ -6,7 +6,7 @@ GitHub repository um an Bots und Extensions zu arbeiten und Aufgaben zu tracken.
 
 Werden in Python 3 geschrieben und benötigen folgende packages:
 
-* [mwclient](https://github.com/mwclient/mwclient)
+* [requests](http://docs.python-requests.org/)
 * [mwparserfromhell](https://github.com/earwig/mwparserfromhell)
 
 Erstelle `<bot>.ini`:

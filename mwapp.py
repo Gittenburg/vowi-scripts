@@ -4,8 +4,9 @@ import sys
 import os.path
 import difflib
 
-import mwclient
 import mwparserfromhell
+
+import mw
 
 NS_TU_WIEN = 3000
 NS_UNI_WIEN = 3002
@@ -20,7 +21,7 @@ def getsite():
 		sys.exit('ACCT environment variable not set')
 	config = configparser.ConfigParser()
 	config.read(os.environ['ACCT'])
-	site = mwclient.Site(config['root']['host'], path=config['root']['path'])
+	site = mw.Site(config['root']['api'])
 	site.login(config['root']['username'], config['root']['password'])
 	return site
 
