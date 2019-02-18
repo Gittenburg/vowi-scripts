@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-
 import argparse
+import re
 
 import mwparserfromhell
 
@@ -24,8 +24,20 @@ def handle_template(tpl, namespace=None):
 		if tpl.get('tiss').value.strip() == '1234567890':
 			tpl.remove('tiss')
 	if tpl.has('institut'):
-		if not tpl.has('abteilung') and not '[' in tpl.get('institut').value:
-			set_param_name(tpl, 'institut', 'abteilung')
+		# [http://www.example.com/institutsowieso Institut Sowieso]
+		if not tpl.has('abteilung'):
+			if not '[' in tpl.get('institut').value:
+				set_param_name(tpl, 'institut', 'abteilung')
+			else:
+				val = str(tpl.get('institut').value)
+				m = re.search('E\d\d\d[-/]?\d*', val)
+				if m:
+					match = m.group().replace('-', '/')
+					if match in abteilungen:
+						tpl.get('institut').value = abteilungen[match].split(':')[1]
+						tpl.get('institut').name = 'abteilung'
+				else:
+					print('no pattern match:', val)
 	if tpl.has('abteilung'):
 		set_param_value(tpl, 'abteilung', ';'.join([s.split('#')[0] for s in str(tpl.get('abteilung').value).replace('_', ' ').split(';')]))
 
@@ -55,7 +67,14 @@ if __name__ == '__main__':
 	parser.add_argument('-c', dest='category', default='LVAs')
 	args = parser.parse_args()
 	site = mwbot.getsite()
-	namespaces = site.get('query', meta='siteinfo', siprop='namespaces')['query']['namespaces']
+
+	abteilungen = {} # id to title
+	for title, abt in site.get('askargs', conditions='Kategorie:Abteilungen', printouts='Hat ID|Hatte ID', parameters='limit=999')['query']['results'].items():
+		if abt['printouts']['Hat ID']:
+			abteilungen[abt['printouts']['Hat ID'][0]] = title
+		if abt['printouts']['Hatte ID']:
+			abteilungen[abt['printouts']['Hatte ID'][0]] = title
+
 	if args.page:
 		handle_page(args.page)
 	else:
