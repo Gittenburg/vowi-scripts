@@ -3,8 +3,8 @@ import argparse
 import sys
 import re
 
-import mw
-import mwapp
+import mwapi
+import mwbot
 import mwparserfromhell
 
 """
@@ -18,7 +18,7 @@ if __name__ == '__main__':
 	parser.add_argument('reason', nargs='?', default='LVA-Umbenennung')
 	args = parser.parse_args()
 
-	site = mwapp.getsite()
+	site = mwbot.getsite()
 
 	rights = site.myrights()
 	for r in ('edit', 'move', 'movefile', 'markbotedits'):
@@ -39,7 +39,7 @@ if __name__ == '__main__':
 	datei_prefix = 'Datei:'+args.src.replace(':','-') + ' - '
 
 	ziel_dateien = []
-	for datei in site.query('backlinks', list='backlinks', bltitle=args.src, blnamespace=mw.NS_FILE):
+	for datei in site.query('backlinks', list='backlinks', bltitle=args.src, blnamespace=mwapi.NS_FILE):
 		name = datei['title'][len(datei_prefix):]
 		dest = 'Datei:'+args.dest.replace(':','-') + ' - ' + name
 		ziel_dateien.append(str(datei['pageid']))
@@ -70,10 +70,10 @@ if __name__ == '__main__':
 			orig = datei['revisions'][0]['*']
 			code = mwparserfromhell.parse(orig)
 			for link in code.ifilter_wikilinks():
-				link_target = mwapp.santitle(link.title)
-				san_dest = mwapp.santitle(args.src)
+				link_target = mwbot.santitle(link.title)
+				san_dest = mwbot.santitle(args.src)
 				link_target, isspecial = re.subn('[sS]pe[cz]ial: *([mM]aterialien|[rR]esources)/', '', link_target)
 
-				if mwapp.santitle(link_target) == san_dest:
+				if mwbot.santitle(link_target) == san_dest:
 					link.title = 'Spezial:Materialien/'*isspecial + args.dest
 			site.post('edit', pageid=datei['pageid'], text=str(code), summary='update LVA backlink', token=site.token(), bot=1)
