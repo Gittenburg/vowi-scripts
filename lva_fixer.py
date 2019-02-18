@@ -30,14 +30,12 @@ def handle_template(tpl, namespace=None):
 				set_param_name(tpl, 'institut', 'abteilung')
 			else:
 				val = str(tpl.get('institut').value)
-				m = re.search('E\d\d\d[-/]?\d*', val)
+				m = re.search('E?0?\d\d\d([-/]\d+)?', val)
 				if m:
 					match = m.group().replace('-', '/')
 					if match in abteilungen:
 						tpl.get('institut').value = abteilungen[match].split(':')[1]
 						tpl.get('institut').name = 'abteilung'
-				else:
-					print('no pattern match:', val)
 	if tpl.has('abteilung'):
 		set_param_value(tpl, 'abteilung', ';'.join([s.split('#')[0] for s in str(tpl.get('abteilung').value).replace('_', ' ').split(';')]))
 
