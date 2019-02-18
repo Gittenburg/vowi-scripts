@@ -13,8 +13,7 @@ Erstelle `<bot>.ini`:
 
 ```
 [root]
-host=vowi.fsinf.at
-path=/
+api=https://vowi.fsinf.at/api.php
 username=Username
 password=Password
 ```

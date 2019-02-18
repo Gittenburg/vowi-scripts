@@ -4,6 +4,7 @@ import argparse
 
 import mwparserfromhell
 
+import mw
 import mwapp
 from mwapp import set_param_value, set_param_name
 
@@ -37,13 +38,15 @@ def handle_template(tpl, namespace=None):
 
 	return 'fixe LVA-Daten (lva_fixer.py)'
 
-def handle_page(page):
-	before = page.text()
+def handle_page(title):
+	page = next(site.query('pages', prop='revisions', titles=title, rvprop='content'))
+
+	before = page['revisions'][0]['*']
 	code = mwparserfromhell.parse(before)
 	templates = code.filter_templates(matches = lambda t: t.name.matches('LVA-Daten'))
 	if templates:
-		msg = handle_template(templates[0], page.namespace)
-		mwapp.save(page, before, str(code), msg)
+		msg = handle_template(templates[0], page['ns'])
+		mwapp.save(site, title, before, str(code), msg)
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
@@ -51,11 +54,10 @@ if __name__ == '__main__':
 	parser.add_argument('-c', dest='category', default='LVAs')
 	args = parser.parse_args()
 	site = mwapp.getsite()
-	namespaces = site.namespaces
+	namespaces = site.get('query', meta='siteinfo', siprop='namespaces')['query']['namespaces']
 	if args.page:
-		handle_page(site.pages[args.page])
+		handle_page(args.page)
 	else:
-		for page in site.categories[args.category]:
-			print(page.name)
-			if mwapp.is_uni_ns(page.namespace):
-				handle_page(page)
+		for page in site.query('categorymembers', list='categorymembers', cmtitle='Category:'+args.category, cmnamespace=mw.join(mwapp.UNI_NAMESPACES)):
+			print(page['title'])
+			handle_page(page['title'])

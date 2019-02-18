@@ -13,8 +13,12 @@ NS_UNI_WIEN = 3002
 NS_MU_WIEN = 3004
 NS_SONSTIGE = 3006
 
-def is_uni_ns(ns):
-	return ns in (NS_TU_WIEN, NS_UNI_WIEN, NS_MU_WIEN, NS_SONSTIGE)
+UNI_NAMESPACES = (
+	NS_TU_WIEN,
+	NS_UNI_WIEN,
+	NS_MU_WIEN,
+	NS_SONSTIGE
+)
 
 def getsite():
 	if 'ACCT' not in os.environ:
@@ -38,7 +42,7 @@ def ensure_enabled(site, scriptname=None):
 def diff(before, after):
 	print('\n'.join(difflib.unified_diff(before.splitlines(), str(after).splitlines())))
 
-def save(page, before, after, msg):
+def save(site, title, before, after, msg):
 	if str(before) == str(after):
 		return False
 	if type(msg) == list:
@@ -46,7 +50,8 @@ def save(page, before, after, msg):
 	print('msg: {}'.format(msg))
 	diff(before, after)
 	if 'NOASK' in os.environ or input() == '':
-		page.save(str(after), msg)
+		site.post('edit', title=title, text=str(after), summary=msg, token=site.token(), **{'assert': 'bot'})
+
 
 def set_param_value(tpl, name, value):
 	oldval = tpl.get(name).value

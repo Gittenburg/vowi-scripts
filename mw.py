@@ -61,3 +61,6 @@ class Site():
 
 	def myrights(self):
 		return self.get('query', list='users', ususers=self.username, usprop='rights')['query']['users'][0]['rights']
+
+def join(things):
+	return '|'.join([str(t) for t in things])
