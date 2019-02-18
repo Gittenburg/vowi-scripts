@@ -51,15 +51,13 @@ def handle_template(tpl, namespace=None):
 
 	return 'fixe LVA-Daten (lva_fixer.py)'
 
-def handle_page(title):
-	page = next(site.query('pages', prop='revisions', titles=title, rvprop='content'))
-
+def handle_page(page):
 	before = page['revisions'][0]['*']
 	code = mwparserfromhell.parse(before)
 	templates = code.filter_templates(matches = lambda t: t.name.matches('LVA-Daten'))
 	if templates:
 		msg = handle_template(templates[0], page['ns'])
-		mwbot.save(site, title, before, str(code), msg)
+		mwbot.save(site, page['title'], before, str(code), msg)
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
@@ -76,8 +74,9 @@ if __name__ == '__main__':
 			abteilungen[abt['printouts']['Hatte ID'][0]] = title
 
 	if args.page:
-		handle_page(args.page)
+		handle_page(next(site.query('pages', prop='revisions', titles=args.page, rvprop='content')))
 	else:
-		for page in site.query('categorymembers', list='categorymembers', cmtitle='Category:'+args.category, cmnamespace=mwapi.join(vowi.UNI_NAMESPACES)):
+		for page in site.query('pages', generator='categorymembers', gcmtitle='Category:'+args.category,
+				gcmnamespace=mwapi.join(vowi.UNI_NAMESPACES), prop='revisions', rvprop='content'):
 			print(page['title'])
-			handle_page(page['title'])
+			handle_page(page)
