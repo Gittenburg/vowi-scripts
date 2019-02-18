@@ -72,7 +72,7 @@ if __name__ == '__main__':
 			for link in code.ifilter_wikilinks():
 				link_target = mwapp.santitle(link.title)
 				san_dest = mwapp.santitle(args.src)
-				link_target, isspecial = re.subn('[sS]pe[zs]ial: *([mM]aterialien|[rR]esources)/', '', link_target)
+				link_target, isspecial = re.subn('[sS]pe[cz]ial: *([mM]aterialien|[rR]esources)/', '', link_target)
 
 				if mwapp.santitle(link_target) == san_dest:
 					link.title = 'Spezial:Materialien/'*isspecial + args.dest
