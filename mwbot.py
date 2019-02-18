@@ -33,12 +33,13 @@ def diff(before, after):
 def save(site, title, before, after, msg):
 	if str(before) == str(after):
 		return False
+	print('title:', title)
 	if type(msg) == list:
 		msg = ', '.join(msg)
 	print('msg: {}'.format(msg))
 	diff(before, after)
 	if 'NOASK' in os.environ or input() == '':
-		site.post('edit', title=title, text=str(after), summary=msg, token=site.token(), **{'assert': 'bot'})
+		site.post('edit', title=title, text=str(after), summary=msg, token=site.token(), bot=1, **{'assert': 'bot'})
 
 
 def set_param_value(tpl, name, value):
