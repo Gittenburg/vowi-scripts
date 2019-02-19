@@ -6,6 +6,7 @@ GitHub repository for [VoWi](https://vowi.fsinf.at/) bots and extensions.
 * `mwbot.py` -- a bot helper module
 * `lva_fixer.py` -- a script to fix LVA-Daten templates
 * `mat_mover.py` -- a script to move LVAs with their resources
+* `old_mat_counter.py` -- a script to count the number of outdated resources so they can be excluded in the statistics on the main page
 
 ## Bots
 

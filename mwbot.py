@@ -30,6 +30,9 @@ def ensure_enabled(site, scriptname=None):
 def diff(before, after):
 	print('\n'.join(difflib.unified_diff(before.splitlines(), str(after).splitlines())))
 
+def edit(site, title, text, summary):
+	site.post('edit', title=title, text=text, summary=summary, token=site.token(), bot=1, **{'assert': 'bot'})
+
 def save(site, title, before, after, msg):
 	if str(before) == str(after):
 		return False
@@ -39,7 +42,7 @@ def save(site, title, before, after, msg):
 	print('msg: {}'.format(msg))
 	diff(before, after)
 	if 'NOASK' in os.environ or input() == '':
-		site.post('edit', title=title, text=str(after), summary=msg, token=site.token(), bot=1, **{'assert': 'bot'})
+		edit(site, title, str(after), msg)
 
 
 def set_param_value(tpl, name, value):
