@@ -59,8 +59,7 @@ def handle_page(page):
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
-	parser.add_argument('page', nargs='?')
-	parser.add_argument('-c', dest='category', default='LVAs')
+	mwbot.add_pagesel_args(parser, categorydefault='LVAs')
 	args = parser.parse_args()
 	site = mwbot.getsite()
 
@@ -71,10 +70,4 @@ if __name__ == '__main__':
 		if abt['printouts']['Hatte ID']:
 			abteilungen[abt['printouts']['Hatte ID'][0]] = title
 
-	if args.page:
-		handle_page(next(site.query('pages', prop='revisions', titles=args.page, rvprop='content')))
-	else:
-		for page in site.query('pages', generator='categorymembers', gcmtitle='Category:'+args.category,
-				gcmnamespace=mwapi.join(vowi.UNI_NAMESPACES), prop='revisions', rvprop='content', gcmlimit='max'):
-			print(page['title'])
-			handle_page(page)
+	mwbot.handle_pagesel_args(site, args, vowi.UNI_NAMESPACES, handle_page)

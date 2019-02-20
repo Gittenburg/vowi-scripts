@@ -8,6 +8,18 @@ import mwparserfromhell
 
 import mwapi
 
+def add_pagesel_args(parser, categorydefault=None):
+	parser.add_argument('page', nargs='?')
+	parser.add_argument('-c', dest='category', default=categorydefault)
+
+def handle_pagesel_args(site, args, namespaces, callback):
+	if args.page:
+		callback(next(site.query('pages', prop='revisions', titles=args.page, rvprop='content')))
+	else:
+		for page in site.query('pages', generator='categorymembers', gcmtitle='Category:'+args.category,
+				gcmnamespace=mwapi.join(namespaces), prop='revisions', rvprop='content', gcmlimit='max'):
+			callback(page)
+
 def getsite():
 	if 'ACCT' not in os.environ:
 		sys.exit('ACCT environment variable not set')
