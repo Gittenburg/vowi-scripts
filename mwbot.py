@@ -33,7 +33,7 @@ def diff(before, after):
 def edit(site, title, text, summary):
 	site.post('edit', title=title, text=text, summary=summary, token=site.token(), bot=1, **{'assert': 'bot'})
 
-def save(site, title, before, after, msg):
+def save(site, title, before, after, msg, ask=True):
 	if str(before) == str(after):
 		return False
 	print('title:', title)
@@ -41,7 +41,7 @@ def save(site, title, before, after, msg):
 		msg = ', '.join(msg)
 	print('msg: {}'.format(msg))
 	diff(before, after)
-	if 'NOASK' in os.environ or input() == '':
+	if not ask or 'NOASK' in os.environ or input() == '':
 		edit(site, title, str(after), msg)
 
 

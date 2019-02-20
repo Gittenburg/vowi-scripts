@@ -21,6 +21,8 @@ class Site():
 		json = resp.json()
 		if 'error' in json:
 			raise ValueError(resp.json())
+		if 'warnings' in resp:
+			raise ValueError(resp)
 		return json
 
 	def post(self, action, **kwargs):
@@ -32,23 +34,25 @@ class Site():
 			raise ValueError(resp.json())
 		return json
 
-	def query(self, resp_key, cont={}, **kwargs):
-		resp = self.get('query', **kwargs)
+	def query(self, resp_key, **kwargs):
+		resp = None
+		data = {}
 
-		# TODO: detect error status codes
-		if 'warnings' in resp:
-			raise ValueError(resp)
-
-		results = resp['query'][resp_key]
-		if type(results) == dict:
-			results = results.values()
-		for r in results:
-			yield r
-
-		if 'continue' in resp:
-			kwargs.update(resp['continue'])
-			for r in self.query(resp_key, **kwargs):
-				yield r
+		while resp is None or 'continue' in resp:
+			resp = self.get('query', **kwargs)
+			if 'continue' in resp:
+				kwargs.update(resp['continue'])
+			for k,v in resp['query'][resp_key].items():
+				if k not in data:
+					data[k] = v
+				else:
+					for sk, sv in v.items():
+						if sk not in data[k]:
+							data[k][sk] = sv
+			if 'batchcomplete' in resp:
+				for x in data.values():
+					yield x
+				data.clear()
 
 	def token(self, type='csrf'):
 		return self.get('query', meta='tokens', type=type)['query']['tokens'][type+'token']

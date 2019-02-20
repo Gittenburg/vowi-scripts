@@ -75,6 +75,6 @@ if __name__ == '__main__':
 		handle_page(next(site.query('pages', prop='revisions', titles=args.page, rvprop='content')))
 	else:
 		for page in site.query('pages', generator='categorymembers', gcmtitle='Category:'+args.category,
-				gcmnamespace=mwapi.join(vowi.UNI_NAMESPACES), prop='revisions', rvprop='content'):
+				gcmnamespace=mwapi.join(vowi.UNI_NAMESPACES), prop='revisions', rvprop='content', gcmlimit='max'):
 			print(page['title'])
 			handle_page(page)
