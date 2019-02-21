@@ -42,6 +42,12 @@ class Site():
 			resp = self.get('query', **kwargs)
 			if 'continue' in resp:
 				kwargs.update(resp['continue'])
+			if type(resp['query'][resp_key]) == list:
+				assert 'batchcomplete' in resp
+				for x in resp['query'][resp_key]:
+					yield x
+				continue
+
 			for k,v in resp['query'][resp_key].items():
 				if k not in data:
 					data[k] = v
