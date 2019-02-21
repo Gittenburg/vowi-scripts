@@ -2,20 +2,20 @@
 
 GitHub repository for [VoWi](https://vowi.fsinf.at/) bots, extensions and userscripts.
 
-* `mwapi.py` -- a lightweight MediaWiki API wrapper
-* `mwbot.py` -- a bot helper module
+## Bots
+
+Are written in Python 3 and require [requests](http://docs.python-requests.org/) and [mwparserfromhell](https://github.com/earwig/mwparserfromhell).
+
+
 * `lva_fixer.py` -- a script to fix LVA-Daten templates
 * `baustein_fixer.py` -- a script to fix templates in `Kategorie:Textbausteine für Beispiele`
 * `mat_mover.py` -- a script to move LVAs with their resources
 * `old_mat_counter.py` -- a script to count the number of outdated resources so they can be excluded in the statistics on the main page
-* `vowi2tiss-search.user.js` -- a userscript to add TISS search links to VoWi LVA pages.
 
-## Bots
+Helper modules:
+* `mwapi.py` -- a lightweight MediaWiki API wrapper
+* `mwbot.py` -- a bot helper module
 
-Are written in Python 3 and require the following packages:
-
-* [requests](http://docs.python-requests.org/)
-* [mwparserfromhell](https://github.com/earwig/mwparserfromhell)
 
 Create `<bot>.ini`:
 
@@ -28,4 +28,10 @@ password=Password
 
 Scripts can then be run as follows:
 
-	$ ACCT=<bot>.ini ./<skript>.py
+	$ ACCT=<bot>.ini ./<script>.py
+
+## Userscripts
+
+Are written in JavaScript and require a userscript manager. [Violentmonkey](https://violentmonkey.github.io/) is recommended.
+
+* `vowi2tiss-search.user.js` -- a userscript to add TISS search links to VoWi LVA pages (does not work with Greasemonkey)
