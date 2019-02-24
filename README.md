@@ -6,7 +6,7 @@ GitHub repository for [VoWi](https://vowi.fsinf.at/) bots, extensions and usersc
 
 Are written in Python 3 and require [requests](http://docs.python-requests.org/) and [mwparserfromhell](https://github.com/earwig/mwparserfromhell).
 
-
+* `report.py` -- a script to report on incorrect template usage at `VoWi:Report`
 * `lva_fixer.py` -- a script to fix LVA-Daten templates
 * `baustein_fixer.py` -- a script to fix templates in `Kategorie:Textbausteine für Beispiele`
 * `mat_mover.py` -- a script to move LVAs with their resources
