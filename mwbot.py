@@ -1,12 +1,18 @@
 import configparser
-import os
-import sys
-import os.path
 import difflib
+import logging
+import os
+import os.path
+import re
+import sys
+
+logging.basicConfig(level=os.environ.get('LOGLEVEL'))
 
 import mwparserfromhell
 
 import mwapi
+
+REDIRECT_RE = re.compile('^\s*#(redirect|weiterleitung)\s*:?\s*\[\[.+\]\]', re.IGNORECASE)
 
 def add_pagesel_args(parser, categorydefault=None):
 	parser.add_argument('page', nargs='?')

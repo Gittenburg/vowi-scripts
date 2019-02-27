@@ -16,10 +16,12 @@ if __name__ == '__main__':
 
 	for page in site.query('pages', generator='allpages', gapprefix=args.index + '/Beispiel ', gaplimit='max', prop='revisions', rvprop='content', gapnamespace=vowi.NS_TU_WIEN):
 		orig = page['revisions'][0]['*']
+		if mwbot.REDIRECT_RE.match(orig):
+			continue
 		code = mwparserfromhell.parse(orig)
 		templates = code.filter_templates(matches= lambda x: x.name.matches('Beispiel') or x.name.matches('Bsp'))
 		if len(templates) == 0:
-			code.insert(0, '{{Beispiel}}')
+			code.insert(0, '{{Beispiel}}\n')
 
 		template = code.filter_templates(matches= lambda x: x.name.matches('Beispiel') or x.name.matches('Bsp'))[0]
 		template.name='Beispiel'
