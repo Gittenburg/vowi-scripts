@@ -8,6 +8,7 @@ Are written in Python 3 and require [requests](http://docs.python-requests.org/)
 
 * `report.py` -- a script to report on incorrect template usage at `VoWi:Report`
 * `lva_fixer.py` -- a script to fix LVA-Daten templates
+* `beispiel_fixer.py` -- a script to fix Beispiel templates
 * `baustein_fixer.py` -- a script to fix templates in `Kategorie:Textbausteine für Beispiele`
 * `mat_mover.py` -- a script to move LVAs with their resources
 * `old_mat_counter.py` -- a script to count the number of outdated resources so they can be excluded in the statistics on the main page
