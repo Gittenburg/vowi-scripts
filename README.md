@@ -11,6 +11,7 @@ Are written in Python 3 and require [requests](http://docs.python-requests.org/)
 * `beispiel_fixer.py` -- a script to fix Beispiel templates
 * `baustein_fixer.py` -- a script to fix templates in `Kategorie:Textbausteine für Beispiele`
 * `mat_mover.py` -- a script to move LVAs with their resources
+* `subpage_mover.py` -- a script to move subpages
 * `old_mat_counter.py` -- a script to count the number of outdated resources so they can be excluded in the statistics on the main page
 * `indextable.py` -- a script to generate index tables
 
