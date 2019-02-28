@@ -15,6 +15,7 @@ class Site():
 		self.session = requests.session()
 
 	def get(self, action, **kwargs):
+		kwargs = {k:v for k,v in kwargs.items() if k is not False}
 		resp = self.session.get(self.api_url, params={'action':action,'format':'json', **kwargs})
 		if resp.status_code != 200:
 			print(resp, resp.text)
@@ -26,6 +27,7 @@ class Site():
 		return json
 
 	def post(self, action, **kwargs):
+		kwargs = {k:v for k,v in kwargs.items() if k is not False}
 		resp = self.session.post(self.api_url, params={'action':action,'format':'json'}, data=kwargs)
 		if resp.status_code != 200:
 			print(resp, resp.text)
