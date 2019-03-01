@@ -12,7 +12,10 @@ import mwparserfromhell
 
 import mwapi
 
-REDIRECT_RE = re.compile('^\s*#(redirect|weiterleitung)\s*:?\s*\[\[.+\]\]', re.IGNORECASE)
+_REDIRECT_RE = re.compile('^\s*#(redirect|weiterleitung)\s*:?\s*\[\[.+\]\]', re.IGNORECASE)
+
+def is_redirect(code):
+	return _REDIRECT_RE.match(code)
 
 def add_pagesel_args(parser, categorydefault=None):
 	parser.add_argument('page', nargs='?')
@@ -51,7 +54,7 @@ def diff(before, after):
 def edit(site, title, text, summary):
 	site.post('edit', title=title, text=text, summary=summary, token=site.token(), bot=1, **{'assert': 'bot'})
 
-def save(site, title, before, after, msg, ask=True):
+def save(site, title, before, after, msg, ask=True, strip_consec_nl=False):
 	if str(before) == str(after):
 		return False
 	print('title:', title)
@@ -59,6 +62,8 @@ def save(site, title, before, after, msg, ask=True):
 		msg = ', '.join(msg)
 	print('msg: {}'.format(msg))
 	diff(before, after)
+	if strip_consec_nl:
+		after = re.sub('\n{3,}', '\n\n', str(after))
 	if not ask or 'NOASK' in os.environ or input() == '':
 		edit(site, title, str(after), msg)
 
