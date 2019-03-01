@@ -9,7 +9,9 @@ from mwparserfromhell.wikicode import Wikicode
 import vowi
 
 def handle_index(site, index):
-	for page in site.query('pages', generator='allpages', gapprefix=index + '/Beispiel ', gaplimit='max', prop='revisions', rvprop='content', gapnamespace=vowi.NS_TU_WIEN):
+	src_ns = next(site.query('pages', prop='info', titles=index))['ns']
+
+	for page in site.query('pages', generator='allpages', gapprefix=index.split(':')[1] + '/Beispiel ', gaplimit='max', prop='revisions', rvprop='content', gapnamespace=src_ns):
 		orig = page['revisions'][0]['*']
 		if mwbot.is_redirect(orig):
 			continue
