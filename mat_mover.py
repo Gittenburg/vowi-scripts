@@ -45,6 +45,7 @@ if __name__ == '__main__':
 		ziel_dateien.append(str(datei['pageid']))
 		if datei['title'] != dest and datei['title'].startswith(datei_prefix):
 			moves[datei['pageid']] = dest
+			print('file   ', name)
 
 	for page in site.query('pages', prop='redirects', titles='|'.join(moves.values())):
 		if not 'missing' in page: # page exists

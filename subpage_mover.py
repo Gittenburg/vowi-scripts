@@ -46,7 +46,7 @@ for idx, (src, dest) in enumerate(reversed(moves), 1):
 		else:
 			break
 else:
-	if input('proceed?') == '':
+	if input('proceed? redirects: {}'.format(not args.noredir)) == '':
 		for src, dest in moves:
 			print(src, dest)
 			site.post('move', **{'from':src},
