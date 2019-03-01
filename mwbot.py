@@ -51,10 +51,10 @@ def ensure_enabled(site, scriptname=None):
 def diff(before, after):
 	print('\n'.join(difflib.unified_diff(before.splitlines(), str(after).splitlines())))
 
-def edit(site, title, text, summary):
-	site.post('edit', title=title, text=text, summary=summary, token=site.token(), bot=1, **{'assert': 'bot'})
+def edit(site, title, text, summary, **kwargs):
+	site.post('edit', title=title, text=text, summary=summary, token=site.token(), bot=1, **{'assert': 'bot'}, **kwargs)
 
-def save(site, title, before, after, msg, ask=True, strip_consec_nl=False):
+def save(site, title, before, after, msg, ask=True, strip_consec_nl=False, **kwargs):
 	if str(before) == str(after):
 		return False
 	print('title:', title)
@@ -67,7 +67,7 @@ def save(site, title, before, after, msg, ask=True, strip_consec_nl=False):
 		diff(before, after)
 		if input() != '':
 			return
-	edit(site, title, str(after), msg)
+	edit(site, title, str(after), msg, **kwargs)
 
 
 def set_param_value(tpl, name, value):
