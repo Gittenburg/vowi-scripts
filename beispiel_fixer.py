@@ -4,17 +4,11 @@ import argparse
 import mwapi
 import mwbot
 import mwparserfromhell
-from mwparserfromhell.nodes.template import Template
+from mwparserfromhell.nodes import Template
 import vowi
 
-if __name__ == '__main__':
-	parser = argparse.ArgumentParser()
-	parser.add_argument('index')
-	args = parser.parse_args()
-
-	site = mwbot.getsite()
-
-	for page in site.query('pages', generator='allpages', gapprefix=args.index + '/Beispiel ', gaplimit='max', prop='revisions', rvprop='content', gapnamespace=vowi.NS_TU_WIEN):
+def handle_index(site, index):
+	for page in site.query('pages', generator='allpages', gapprefix=index + '/Beispiel ', gaplimit='max', prop='revisions', rvprop='content', gapnamespace=vowi.NS_TU_WIEN):
 		orig = page['revisions'][0]['*']
 		if mwbot.REDIRECT_RE.match(orig):
 			continue
@@ -69,3 +63,11 @@ if __name__ == '__main__':
 		if template.has('bausteine') and not template.get('bausteine').value.endswith('\n'):
 			template.get('bausteine').value.append('\n')
 		mwbot.save(site, page['title'], orig, str(code).replace('}}\n\n\n', '}}\n\n'), 'beispiel_fixer.py')
+
+if __name__ == '__main__':
+	parser = argparse.ArgumentParser()
+	parser.add_argument('index')
+	args = parser.parse_args()
+
+	site = mwbot.getsite()
+	handle_index(site, args.index)
