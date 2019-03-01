@@ -9,6 +9,9 @@ NS_TEMPLATE = 10
 NS_HELP = 12
 NS_CATEGORY = 14
 
+class MWException(Exception):
+	pass
+
 class Site():
 	def __init__(self, api_url):
 		self.api_url = api_url
@@ -21,9 +24,9 @@ class Site():
 			print(resp, resp.text)
 		json = resp.json()
 		if 'error' in json:
-			raise ValueError(resp.json())
+			raise MWException(json['error'])
 		if 'warnings' in resp:
-			raise ValueError(resp)
+			raise MWException(json['warnings'])
 		return json
 
 	def post(self, action, **kwargs):
@@ -33,7 +36,7 @@ class Site():
 			print(resp, resp.text)
 		json = resp.json()
 		if 'error' in json:
-			raise ValueError(resp.json())
+			raise MWException(json['error'])
 		return json
 
 	def query(self, resp_key, limit=0, **kwargs):
