@@ -15,7 +15,7 @@ def handle_index(site, index):
 			continue
 
 		code = mwparserfromhell.parse(orig)
-		templates = code.filter_templates('Beispiel')
+		templates = code.filter_templates(matches=lambda x: x.name.matches('Beispiel'))
 		if len(templates) > 0:
 			template = templates[0]
 		else:
