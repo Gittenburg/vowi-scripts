@@ -15,7 +15,7 @@ def handle_index(site, index):
 			continue
 
 		code = mwparserfromhell.parse(orig)
-		templates = code.filter_templates(('Beispiel', 'Bsp'))
+		templates = code.filter_templates('Beispiel')
 		if len(templates) > 0:
 			template = templates[0]
 		else:
@@ -23,7 +23,18 @@ def handle_index(site, index):
 			code.insert(0, template)
 
 		# legacy format handling
-		template.name='Beispiel'
+		if template.has('status'):
+			fields = template.get('status').value.split(';')
+			if len(fields) == 1:
+				k = fields[0]
+				v = ''
+			else:
+				k, v = fields
+			if k.strip() in ('teils', 'falsch'):
+				template.add(k.strip(), v.strip())
+				template.remove('status')
+			else:
+				print('unknown status: {}'.format(k))
 
 		if template.has('hilfreiches'):
 			template.get('hilfreiches').name = 'bausteine'
@@ -38,14 +49,6 @@ def handle_index(site, index):
 			elif str(template.get('1').value).strip() == 'falsch':
 				template.add('status', 'falsch')
 				template.remove('1')
-
-		if template.has('teils'):
-			template.add('status', 'teils;'+str(template.get('teils').value))
-			template.remove('teils')
-
-		if template.has('falsch'):
-			template.add('status', 'falsch;'+str(template.get('falsch').value))
-			template.remove('falsch')
 
 		if not template.has('1'):
 			angabe_div = code.filter_tags(matches=lambda x: x.tag.matches('blockquote') or len([x for x in x.attributes if '{{Angabe}}' in x or '#EFEFEF' in x]))
