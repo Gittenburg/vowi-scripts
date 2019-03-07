@@ -1,3 +1,4 @@
+import argparse
 import configparser
 import difflib
 import logging
@@ -29,12 +30,20 @@ def handle_pagesel_args(site, args, namespaces, callback):
 				gcmnamespace=mwapi.join(namespaces), prop='revisions', rvprop='content', gcmlimit='max'):
 			callback(page)
 
-def getsite(scriptname):
+def get_argparser():
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--dry',   action='store_const', help='omit all POST requests', dest='postmode', const=mwapi.Mode.DRY)
+	parser.add_argument('--noask', action='store_const', help='do POST requests without confirmation', dest='postmode', const=mwapi.Mode.NOASK)
+	return parser
+
+def getsite(scriptname, args):
 	if 'ACCT' not in os.environ:
 		sys.exit('ACCT environment variable not set')
 	config = configparser.ConfigParser()
 	config.read(os.environ['ACCT'])
-	site = mwapi.Site(config['root']['api'], scriptname)
+	if args.postmode == None:
+		args.postmode = mwapi.Mode.ASK
+	site = mwapi.Site(config['root']['api'], scriptname, args.postmode)
 	site.login(config['root']['username'], config['root']['password'])
 	return site
 

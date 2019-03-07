@@ -13,14 +13,13 @@ not check if the destination exists beforehand.
 """
 
 if __name__ == '__main__':
-	parser = argparse.ArgumentParser()
+	parser = mwbot.get_argparser()
 	parser.add_argument('src')
 	parser.add_argument('dest')
 	parser.add_argument('reason', nargs='?', default='LVA-Umbenennung')
-	parser.add_argument('--dry', action='store_true')
 	args = parser.parse_args()
 
-	site = mwbot.getsite('mat_mover.py')
+	site = mwbot.getsite('mat_mover.py', args)
 	site.require_rights('edit', 'move', 'movefile', 'markbotedits')
 
 	srcpage = next(site.results(prop='info', titles=args.src))
@@ -63,8 +62,7 @@ if __name__ == '__main__':
 
 	for src, dest in moves.items():
 		print(src, dest)
-		if not args.dry:
-			site.post('move', fromid=src, to=dest, reason=site.msg(args.reason), movetalk=1, movesubpages=0, token=site.token())
+		site.post('move', fromid=src, to=dest, reason=site.msg(args.reason), movetalk=1, movesubpages=0, token=site.token())
 
 	# update backlinks (the way Materialien work)
 	if ziel_dateien:
@@ -78,5 +76,4 @@ if __name__ == '__main__':
 
 				if mwbot.santitle(link_target) == san_dest:
 					link.title = 'Spezial:Materialien/'*isspecial + args.dest
-			if not args.dry:
-				site.post('edit', pageid=datei['pageid'], text=str(code), summary=site.msg('update LVA backlink'), token=site.token(), bot=1)
+			site.post('edit', pageid=datei['pageid'], text=str(code), summary=site.msg('update LVA backlink'), token=site.token(), bot=1)

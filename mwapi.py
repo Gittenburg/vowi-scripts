@@ -29,19 +29,31 @@ def chunks(l, n):
 	for i in range(0, len(l), n):
 		yield l[i:i + n]
 
+class Mode:
+	ASK   = 0 # prompt for every POST request
+	NOASK = 1 # do POST requests without asking
+	DRY   = 2 # skip POST requests
+
 class Site():
-	def __init__(self, api_url, scriptname):
+	def __init__(self, api_url, scriptname, mode):
 		self.api_url = api_url
 		self.session = requests.session()
 		self.scriptname = scriptname
+		self.mode = mode
 
 	def msg(self, text):
 		return '{} ({})'.format(text, self.scriptname)
 
-	def request(self, method, action, params, data):
+	def _request(self, method, action, params, data, skipcheck=False):
 		params = {k:v for k,v in params.items() if k is not False}
 		data   = {k:v for k,v in data.items()   if k is not False}
-		resp = self.session.request(method, self.api_url, params={'action':action,'format':'json', **params}, data=data)
+		params['action'] = action
+		params['format'] = 'json'
+		if method == 'post' and not skipcheck:
+			if self.mode == Mode.DRY or\
+			   self.mode == Mode.ASK and input('POST {}\n{}'.format(params, data)) != '':
+				return {}
+		resp = self.session.request(method, self.api_url, params=params, data=data)
 		if resp.status_code != 200:
 			print(resp, resp.text)
 		json = resp.json()
@@ -51,11 +63,11 @@ class Site():
 			raise MWException(json['warnings'])
 		return json
 
-	def post(self, action, **kwargs):
-		return self.request('post', action, {}, kwargs)
+	def post(self, action, skipcheck=False, **kwargs):
+		return self._request('post', action, {}, kwargs, skipcheck=skipcheck)
 
 	def get(self, action, **kwargs):
-		return self.request('get', action, kwargs, {})
+		return self._request('get', action, kwargs, {})
 
 	def merge_dicts(a, b):
 		for k, v in b.items():
@@ -83,7 +95,7 @@ class Site():
 		resp = None
 
 		while resp is None or 'continue' in resp:
-			resp = self.post('query', **kwargs)
+			resp = self.get('query', **kwargs)
 			_dmerge(resp['query'], data)
 
 			if 'batchcomplete' in resp:
@@ -94,16 +106,16 @@ class Site():
 				kwargs.update(resp['continue'])
 
 	def token(self, type='csrf'):
-		return self.post('query', meta='tokens', type=type)['query']['tokens'][type+'token']
+		return self.get('query', meta='tokens', type=type)['query']['tokens'][type+'token']
 
 	def login(self, username, password):
-		resp = self.post('login', lgname=username, lgpassword=password, lgtoken=self.token('login'))
+		resp = self.post('login', lgname=username, lgpassword=password, lgtoken=self.token('login'), skipcheck=True)
 		assert resp['login']['result'] == 'Success'
 		self.userid = resp['login']['lguserid']
 		self.username = resp['login']['lgusername']
 
 	def require_rights(self, *rights):
-		my_rights = self.post('query', list='users', ususers=self.username, usprop='rights')['query']['users'][0]['rights']
+		my_rights = self.get('query', list='users', ususers=self.username, usprop='rights')['query']['users'][0]['rights']
 		for r in rights:
 			if r not in my_rights:
 				raise MWException('account lacks permission: {}'.format(r))
