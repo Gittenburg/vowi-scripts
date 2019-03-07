@@ -14,20 +14,23 @@ def handle(site, page):
 	for bsp in result['pages'].values():
 		classes = []
 		if not 'missing' in bsp:
-			bspcode = mwparserfromhell.parse(bsp['revisions'][0]['*'])
+			bspcode = mwparserfromhell.parse(bsp['revisions'][0]['*'], skip_style_tags=True)
+			if bspcode.filter_templates(matches=lambda t: t.name.matches('ungelöst')):
+				continue
+
 			templates = bspcode.filter_templates(matches=lambda t: t.name.matches('Beispiel'))
 			if len(templates):
 				tpl = templates[0]
-				if tpl.has('status'):
-					status = tpl.get('status').value.strip().lower()
-					if status in ('datei', 'extern'):
-						classes.append('beispiel-{}'.format(status))
-				else:
-					status = None
-				if status not in ('datei', 'extern', 'ungelöst') and tpl.has('1') and tpl.get('1').value.strip() != '':
-					classes.append('beispiel-wikicode')
+
 				if tpl.has('teils') and tpl.get('teils').value.strip() != '':
 					classes.append('beispiel-teils')
+
+				status = tpl.get('status').value.strip().lower() if tpl.has('status') else None
+
+				if status in ('datei', 'extern'):
+					classes.append('beispiel-{}'.format(status))
+				elif tpl.has('1') and tpl.get('1').value.strip() != '':
+					classes.append('beispiel-wikicode')
 		if classes:
 			classes_per_title[bsp['title']] = classes
 			if 'redirects' in result:
