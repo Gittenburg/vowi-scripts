@@ -8,7 +8,7 @@ import vowi
 def count_old_resources():
 	old_lvas = []
 
-	for title in site.post('askargs', conditions='Category:LVAs|Ist veraltet::1', parameters='limit=9999')['query']['results']:
+	for title in site.get('askargs', conditions='Category:LVAs|Ist veraltet::1', parameters='limit=9999')['query']['results']:
 		old_lvas.append(title)
 		old_resources = 0
 

@@ -34,9 +34,10 @@ class Site():
 		self.api_url = api_url
 		self.session = requests.session()
 
-	def post(self, action, **kwargs):
-		kwargs = {k:v for k,v in kwargs.items() if k is not False}
-		resp = self.session.post(self.api_url, params={'action':action,'format':'json'}, data=kwargs)
+	def request(self, method, action, params, data):
+		params = {k:v for k,v in params.items() if k is not False}
+		data   = {k:v for k,v in data.items()   if k is not False}
+		resp = self.session.request(method, self.api_url, params={'action':action,'format':'json', **params}, data=data)
 		if resp.status_code != 200:
 			print(resp, resp.text)
 		json = resp.json()
@@ -45,6 +46,12 @@ class Site():
 		if 'warnings' in resp:
 			raise MWException(json['warnings'])
 		return json
+
+	def post(self, action, **kwargs):
+		return self.request('post', action, {}, kwargs)
+
+	def get(self, action, **kwargs):
+		return self.request('get', action, kwargs, {})
 
 	def merge_dicts(a, b):
 		for k, v in b.items():
@@ -55,8 +62,11 @@ class Site():
 
 	def results(self, **kwargs):
 		for batch in self.batches(**kwargs):
-			for result in batch[kwargs.get('list', 'pages')].values():
-				yield result
+			results = batch[kwargs.get('list', 'pages')]
+			if type(results) == list:
+				for r in results: yield r
+			elif type(results) == dict:
+				for r in results.values(): yield r
 
 	def complete(self, **kwargs):
 		data = {}
@@ -88,8 +98,11 @@ class Site():
 		self.userid = resp['login']['lguserid']
 		self.username = resp['login']['lgusername']
 
-	def myrights(self):
-		return self.post('query', list='users', ususers=self.username, usprop='rights')['query']['users'][0]['rights']
+	def require_rights(self, rights):
+		my_rights = self.post('query', list='users', ususers=self.username, usprop='rights')['query']['users'][0]['rights']
+		for r in rights:
+			if r not in my_rights:
+				raise MWException('account lacks permission: {}'.format(r))
 
 def join(things):
 	return '|'.join([str(t) for t in things])
