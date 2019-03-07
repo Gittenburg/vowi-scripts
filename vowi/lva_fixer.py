@@ -37,7 +37,9 @@ def handle_template(tpl, namespace=None):
 	if tpl.has('zuordnungen'):
 		rels = tpl.get('zuordnungen').value.filter_templates()
 		for rel in rels:
-			if not rel.has('2') and rel.has('wahl'):
+			if rel.has('2'):
+				rel.get('2').value = str(rel.get('2').value).replace('–', '-')
+			elif rel.has('wahl'):
 				rel.remove('wahl')
 		rels.sort(key=lambda x: x.get('1'))
 		tpl.get('zuordnungen').value = '\n' + '\n'.join([' '*4 + str(r) for r in rels]) + '\n'
