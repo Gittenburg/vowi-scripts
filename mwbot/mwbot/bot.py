@@ -74,6 +74,18 @@ def save(site, title, before, after, msg, ask=True, strip_consec_nl=False, **kwa
 			return
 	site.post('edit', title=title, text=str(after), summary=msg, token=site.token(), bot=1, **{'assert': 'bot'}, **kwargs, skipprompt=True)
 
+def moves(site, moves, reason, **kwargs):
+	for src, dest in moves:
+		print('from: {}\nto:   {}'.format(src, dest))
+	if input() == '':
+		for idx, (src, dest) in enumerate(moves, 1):
+			print('{}/{}'.format(idx, len(moves)))
+			try:
+				site.post('move', **{'from':src}, to=dest, reason=site.msg(reason), movetalk=1, movesubpages=1, token=site.token(), skipprompt=True)
+			except api.MWException as e:
+				if e.args[0]['code'] != 'articleexists':
+					raise e
+
 def set_param_value(tpl, name, value):
 	oldval = tpl.get(name).value
 	tpl.get(name).value = ' '*(oldval.startswith(' ') and not value.startswith(' ')) + value + '\n'*(not value.endswith('\n'))
