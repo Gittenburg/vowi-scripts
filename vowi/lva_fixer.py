@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
-import argparse
 import re
 
 import mwparserfromhell
 
-import mwapi
 import mwbot
 from mwbot import set_param_value, set_param_name
 import vowi
@@ -17,9 +15,6 @@ def handle_template(tpl, namespace=None):
 			set_param_value(tpl, 'wann', 'WS')
 		elif tpl.get('wann').value.strip() in ('Winter- und Sommersemester', 'Sommer- und Wintersemester'):
 			set_param_value(tpl, 'wann', 'beide')
-	if tpl.has('sprache'):
-		# titleize
-		tpl.get('sprache').value = ';'.join(s.title() for s in tpl.get('sprache').value.split(';'))
 	if tpl.has('tiss'):
 		if tpl.get('tiss').value.strip() == '1234567890':
 			tpl.remove('tiss')
@@ -47,7 +42,7 @@ def handle_template(tpl, namespace=None):
 		rels.sort(key=lambda x: x.get('1'))
 		tpl.get('zuordnungen').value = '\n' + '\n'.join([' '*4 + str(r) for r in rels]) + '\n'
 
-	return 'fixe LVA-Daten (lva_fixer.py)'
+	return 'fixe LVA-Daten'
 
 def handle_page(page):
 	before = page['revisions'][0]['*']
@@ -55,13 +50,13 @@ def handle_page(page):
 	templates = code.filter_templates(matches = lambda t: t.name.matches('LVA-Daten'))
 	if templates:
 		msg = handle_template(templates[0], page['ns'])
-		mwbot.save(site, page['title'], before, str(code), msg)
+		mwbot.save(site, page['title'], before, str(code), site.msg(msg))
 
 if __name__ == '__main__':
-	parser = argparse.ArgumentParser()
+	parser = mwbot.get_argparser()
 	mwbot.add_pagesel_args(parser, categorydefault='LVAs')
 	args = parser.parse_args()
-	site = mwbot.getsite()
+	site = mwbot.getsite('lva_fixer.py', args)
 
 	abteilungen = {} # id to title
 	for title, abt in site.get('askargs', conditions='Kategorie:Abteilungen', printouts='Hat ID|Hatte ID', parameters='limit=999')['query']['results'].items():

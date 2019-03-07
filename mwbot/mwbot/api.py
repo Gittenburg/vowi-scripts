@@ -39,12 +39,12 @@ class Site():
 	def msg(self, text):
 		return '{} ({})'.format(text, self.scriptname)
 
-	def _request(self, method, action, params, data, skipcheck=False):
+	def _request(self, method, action, params, data, skipprompt=False):
 		params = {k:v for k,v in params.items() if k is not False}
 		data   = {k:v for k,v in data.items()   if k is not False}
 		params['action'] = action
 		params['format'] = 'json'
-		if method == 'post' and not skipcheck:
+		if method == 'post' and not skipprompt:
 			if self.mode == Mode.DRY or\
 			   self.mode == Mode.ASK and input('POST {}\n{}'.format(params, data)) != '':
 				return {}
@@ -58,8 +58,8 @@ class Site():
 			raise MWException(json['warnings'])
 		return json
 
-	def post(self, action, skipcheck=False, **kwargs):
-		return self._request('post', action, {}, kwargs, skipcheck=skipcheck)
+	def post(self, action, skipprompt=False, **kwargs):
+		return self._request('post', action, {}, kwargs, skipprompt=skipprompt)
 
 	def get(self, action, **kwargs):
 		return self._request('get', action, kwargs, {})
@@ -104,7 +104,7 @@ class Site():
 		return self.get('query', meta='tokens', type=type)['query']['tokens'][type+'token']
 
 	def login(self, username, password):
-		resp = self.post('login', lgname=username, lgpassword=password, lgtoken=self.token('login'), skipcheck=True)
+		resp = self.post('login', lgname=username, lgpassword=password, lgtoken=self.token('login'), skipprompt=True)
 		assert resp['login']['result'] == 'Success'
 		self.userid = resp['login']['lguserid']
 		self.username = resp['login']['lgusername']
