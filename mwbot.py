@@ -29,12 +29,12 @@ def handle_pagesel_args(site, args, namespaces, callback):
 				gcmnamespace=mwapi.join(namespaces), prop='revisions', rvprop='content', gcmlimit='max'):
 			callback(page)
 
-def getsite():
+def getsite(scriptname):
 	if 'ACCT' not in os.environ:
 		sys.exit('ACCT environment variable not set')
 	config = configparser.ConfigParser()
 	config.read(os.environ['ACCT'])
-	site = mwapi.Site(config['root']['api'])
+	site = mwapi.Site(config['root']['api'], scriptname)
 	site.login(config['root']['username'], config['root']['password'])
 	return site
 

@@ -20,7 +20,7 @@ if __name__ == '__main__':
 	parser.add_argument('--dry', action='store_true')
 	args = parser.parse_args()
 
-	site = mwbot.getsite()
+	site = mwbot.getsite('mat_mover.py')
 	site.require_rights('edit', 'move', 'movefile', 'markbotedits')
 
 	srcpage = next(site.results(prop='info', titles=args.src))
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 			moves[datei['pageid']] = dest
 			print('file   ', name)
 
-	for page in site.results(prop='redirects', titles='|'.join(moves.values())):
+	for page in site.results(prop='redirects', titles=mwapi.join(moves.values())):
 		if not 'missing' in page: # page exists
 			if 'redirects' in page:
 				for r in page['redirects']:
@@ -56,13 +56,15 @@ if __name__ == '__main__':
 					continue
 			sys.exit('aborting: destination "{}" already exists'.format(dest))
 
-	if input('no collisions found, are you sure you want to move src to dest?\nsrc:  {}\ndest: {}\n'.format(args.src, args.dest)) != '':
+	if input(('no collisions found, are you sure you want to move src to dest?\n'
+			  'src:  {}\n'
+			  'dest: {}\n').format(args.src, args.dest)) != '':
 		sys.exit()
 
 	for src, dest in moves.items():
 		print(src, dest)
 		if not args.dry:
-			site.post('move', fromid=src, to=dest, reason=args.reason + ' (mat_mover.py)', movetalk=1, movesubpages=0, token=site.token())
+			site.post('move', fromid=src, to=dest, reason=site.msg(args.reason), movetalk=1, movesubpages=0, token=site.token())
 
 	# update backlinks (the way Materialien work)
 	if ziel_dateien:
@@ -77,4 +79,4 @@ if __name__ == '__main__':
 				if mwbot.santitle(link_target) == san_dest:
 					link.title = 'Spezial:Materialien/'*isspecial + args.dest
 			if not args.dry:
-				site.post('edit', pageid=datei['pageid'], text=str(code), summary='update LVA backlink', token=site.token(), bot=1)
+				site.post('edit', pageid=datei['pageid'], text=str(code), summary=site.msg('update LVA backlink'), token=site.token(), bot=1)

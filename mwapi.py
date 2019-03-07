@@ -30,9 +30,13 @@ def chunks(l, n):
 		yield l[i:i + n]
 
 class Site():
-	def __init__(self, api_url):
+	def __init__(self, api_url, scriptname):
 		self.api_url = api_url
 		self.session = requests.session()
+		self.scriptname = scriptname
+
+	def msg(self, text):
+		return '{} ({})'.format(text, self.scriptname)
 
 	def request(self, method, action, params, data):
 		params = {k:v for k,v in params.items() if k is not False}
