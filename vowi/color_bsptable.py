@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-import argparse
 import logging
 import sys
 
 import mwparserfromhell
 
-import mwapi
 import mwbot
 
 def handle(site, page):
@@ -32,11 +30,12 @@ def handle(site, page):
 					classes.append('beispiel-teils')
 		if classes:
 			classes_per_title[bsp['title']] = classes
-			for r in result['redirects']:
-				if r['to'] == bsp['title']:
-					classes_per_title[r['from']] = classes
-					if not bsp['title'].startswith(page):
-						classes_per_title[r['from']].append('beispiel-alt')
+			if 'redirects' in result:
+				for r in result['redirects']:
+					if r['to'] == bsp['title']:
+						classes_per_title[r['from']] = classes
+						if not bsp['title'].startswith(page):
+							classes_per_title[r['from']].append('beispiel-alt')
 
 	idxpage = next(site.results(prop='revisions', titles=page, rvprop='content'))
 	code = mwparserfromhell.parse(idxpage['revisions'][0]['*'])
@@ -57,14 +56,14 @@ def handle(site, page):
 			else:
 				logging.info('found cell with {} links'.format(len(links)))
 
-	mwbot.save(site, page, idxpage['revisions'][0]['*'], str(code), 'update (beispielindex_color.py)')
+	mwbot.save(site, page, idxpage['revisions'][0]['*'], str(code), site.msg('update'))
 
 if __name__ == '__main__':
-	parser = argparse.ArgumentParser()
+	parser = mwbot.get_argparser()
 	parser.add_argument('page')
 	args = parser.parse_args()
 
-	site = mwbot.getsite()
+	site = mwbot.getsite('color_bsptable.py', args)
 	try:
 		handle(site, args.page)
 	except KeyboardInterrupt as e:

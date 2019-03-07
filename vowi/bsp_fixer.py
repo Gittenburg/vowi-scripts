@@ -1,8 +1,6 @@
 #!/usr/bin/python3
-import argparse
 import re
 
-import mwapi
 import mwbot
 import mwparserfromhell
 from mwparserfromhell.nodes import Template, Text
@@ -10,9 +8,9 @@ from mwparserfromhell.wikicode import Wikicode
 import vowi
 
 def handle_index(site, index):
-	src_ns = next(site.query('pages', prop='info', titles=index))['ns']
+	src_ns = next(site.results(prop='info', titles=index))['ns']
 
-	for page in site.query('pages', generator='allpages', gapprefix=index.split(':')[1] + '/Beispiel ', gaplimit='max', prop='revisions', rvprop='content', gapnamespace=src_ns):
+	for page in site.results(generator='allpages', gapprefix=index.split(':')[1] + '/Beispiel ', gaplimit='max', prop='revisions', rvprop='content', gapnamespace=src_ns):
 		orig = page['revisions'][0]['*']
 		if mwbot.is_redirect(orig):
 			continue
@@ -24,6 +22,7 @@ def handle_index(site, index):
 		else:
 			template = Template(Wikicode([Text('Beispiel')]))
 			code.insert(0, template)
+			code.insert(1, '\n')
 
 		# legacy format handling
 		template.name = 'Beispiel'
@@ -73,9 +72,9 @@ def handle_index(site, index):
 		mwbot.save(site, page['title'], orig, str(code), 'beispiel_fixer.py', strip_consec_nl=True)
 
 if __name__ == '__main__':
-	parser = argparse.ArgumentParser()
+	parser = mwbot.get_argparser()
 	parser.add_argument('index')
 	args = parser.parse_args()
 
-	site = mwbot.getsite()
+	site = mwbot.getsite('bsp_fixer.py', args)
 	handle_index(site, args.index)

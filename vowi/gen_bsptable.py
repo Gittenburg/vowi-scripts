@@ -9,7 +9,7 @@ args = parser.parse_args()
 
 print('{| class=beispiel-table')
 for i in range(args.min, args.max+1):
-	print('| [[/{}{}|{}]]'.format(args.linkprefix, i, i))
+	print('||[[/{}{}|{}]]'.format(args.linkprefix, i, i))
 	if i != args.max and i % 10 == 0:
 		print('|-')
 	if i != args.max and i % 100 == 0:
