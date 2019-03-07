@@ -12,9 +12,7 @@ parser.add_argument('--noredir', action='store_true')
 args = parser.parse_args()
 
 site = mwbot.getsite()
-
-if 'move' not in site.myrights():
-	sys.exit('this script requires the move right')
+site.require_rights('move')
 
 src_ns = next(site.query('pages', prop='info', titles=args.src))['ns']
 

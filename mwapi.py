@@ -98,7 +98,7 @@ class Site():
 		self.userid = resp['login']['lguserid']
 		self.username = resp['login']['lgusername']
 
-	def require_rights(self, rights):
+	def require_rights(self, *rights):
 		my_rights = self.post('query', list='users', ususers=self.username, usprop='rights')['query']['users'][0]['rights']
 		for r in rights:
 			if r not in my_rights:
