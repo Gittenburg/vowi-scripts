@@ -14,6 +14,7 @@ The `mwbot` module provides a lightweight MediaWiki API wrapper.
 `vowi/` contains VoWi-specific scripts:
 
 * `mat_mover.py` -- move LVAs with their [resources](https://fs.fsinf.at/wiki/Resources)
+* `bsp_mover.py` -- move Beispiele to a new semester
 * `lva_fixer.py` -- a script to fix LVA-Daten templates
 * `bsp_fixer.py` -- a script to fix Beispiel templates
 * `baustein_fixer.py` -- a script to fix templates in `Kategorie:Textbausteine für Beispiele`
