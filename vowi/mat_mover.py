@@ -3,9 +3,9 @@ import argparse
 import sys
 import re
 
-import mwapi
-import mwbot
 import mwparserfromhell
+
+import mwbot
 
 """
 Not using move subpages functionality because it does
@@ -36,7 +36,7 @@ if __name__ == '__main__':
 	datei_prefix = 'Datei:'+args.src.replace(':','-') + ' - '
 
 	ziel_dateien = []
-	for datei in site.results(list='backlinks', bltitle=args.src, blnamespace=mwapi.NS_FILE):
+	for datei in site.results(list='backlinks', bltitle=args.src, blnamespace=mwbot.NS_FILE):
 		name = datei['title'][len(datei_prefix):]
 		dest = 'Datei:'+args.dest.replace(':','-') + ' - ' + name
 		ziel_dateien.append(str(datei['pageid']))
@@ -44,7 +44,7 @@ if __name__ == '__main__':
 			moves[datei['pageid']] = dest
 			print('file   ', name)
 
-	for page in site.results(prop='redirects', titles=mwapi.join(moves.values())):
+	for page in site.results(prop='redirects', titles=mwbot.join(moves.values())):
 		if not 'missing' in page: # page exists
 			if 'redirects' in page:
 				for r in page['redirects']:

@@ -11,7 +11,16 @@ logging.basicConfig(level=os.environ.get('LOGLEVEL'))
 
 import mwparserfromhell
 
-import mwapi
+from . import api
+
+NS_MAIN = 0
+NS_USER = 2
+NS_PROJECT = 4
+NS_FILE = 6
+NS_MEDIAWIKI = 8
+NS_TEMPLATE = 10
+NS_HELP = 12
+NS_CATEGORY = 14
 
 _REDIRECT_RE = re.compile('^\s*#(redirect|weiterleitung)\s*:?\s*\[\[.+\]\]', re.IGNORECASE)
 
@@ -27,13 +36,13 @@ def handle_pagesel_args(site, args, namespaces, callback):
 		callback(next(site.query('pages', prop='revisions', titles=args.page, rvprop='content')))
 	else:
 		for page in site.query('pages', generator='categorymembers', gcmtitle='Category:'+args.category,
-				gcmnamespace=mwapi.join(namespaces), prop='revisions', rvprop='content', gcmlimit='max'):
+				gcmnamespace=api.join(namespaces), prop='revisions', rvprop='content', gcmlimit='max'):
 			callback(page)
 
 def get_argparser():
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--dry',   action='store_const', help='omit all POST requests', dest='postmode', const=mwapi.Mode.DRY)
-	parser.add_argument('--noask', action='store_const', help='do POST requests without confirmation', dest='postmode', const=mwapi.Mode.NOASK)
+	parser.add_argument('--dry',   action='store_const', help='skip all POST requests', dest='postmode', const=api.Mode.DRY)
+	parser.add_argument('--noask', action='store_const', help='do POST requests without confirmation', dest='postmode', const=api.Mode.NOASK)
 	return parser
 
 def getsite(scriptname, args):
@@ -42,8 +51,8 @@ def getsite(scriptname, args):
 	config = configparser.ConfigParser()
 	config.read(os.environ['ACCT'])
 	if args.postmode == None:
-		args.postmode = mwapi.Mode.ASK
-	site = mwapi.Site(config['root']['api'], scriptname, args.postmode)
+		args.postmode = api.Mode.ASK
+	site = api.Site(config['root']['api'], scriptname, args.postmode)
 	site.login(config['root']['username'], config['root']['password'])
 	return site
 
