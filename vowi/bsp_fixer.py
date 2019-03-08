@@ -27,16 +27,7 @@ def handle_index(site, index):
 		# legacy format handling
 		template.name = 'Beispiel'
 		if template.has('status'):
-			fields = template.get('status').value.split(';')
-			if len(fields) == 1:
-				k = fields[0]
-				v = ''
-			else:
-				k, v = fields
-			if k.strip() in ('teils', 'falsch'):
-				template.add(k.strip(), v.strip())
-				template.remove('status')
-			else:
+			if str(template.get('status').value).strip() not in ('extern', 'Datei'):
 				print('unknown status: {}'.format(k))
 
 		if template.has('gekommen'):
@@ -67,7 +58,8 @@ def handle_index(site, index):
 			for bstn in hilfreiches[0].filter_templates():
 				bstn.name = re.sub('^([Vv]orlage|[Tt]emplate):', '', str(bstn.name))
 				if not bstn.name.startswith('Baustein'):
-					bstn.name = 'Baustein:' + str(bstn.name)
+					if not bstn.name.matches('extern'):
+						bstn.name = 'Baustein:' + str(bstn.name)
 
 		mwbot.save(site, page['title'], orig, str(code), 'beispiel_fixer.py', strip_consec_nl=True)
 
