@@ -42,14 +42,14 @@ if __name__ == '__main__':
 					continue
 				else:
 					if args.to:
-						name = int(name) + (int(args.to) - min_)
+						name = int(name) + int(args.to)
 					moves.append((page['title'], FORMAT.format(index_parts[0], semester, name)))
 	else:
 		if args.to is None:
 			args.to = from_
 		moves.append((args.index + '/Beispiel {}'.format(from_), FORMAT.format(index_parts[0], semester, args.to)))
 	if moves:
-		for src, dest in moves:
+		for src, dest in sorted(moves):
 			print('from: {}\nto:   {}'.format(src, dest))
 		if input() == '':
 			for idx, (src, dest) in enumerate(moves, 1):
