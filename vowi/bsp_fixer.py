@@ -58,7 +58,7 @@ def handle_index(site, index):
 			for bstn in hilfreiches[0].filter_templates():
 				bstn.name = re.sub('^([Vv]orlage|[Tt]emplate):', '', str(bstn.name))
 				if not bstn.name.startswith('Baustein'):
-					if not bstn.name.matches('extern'):
+					if str(bstn.name).strip().lower() not in ('extern', 'definition'):
 						bstn.name = 'Baustein:' + str(bstn.name)
 
 		mwbot.save(site, page['title'], orig, str(code), 'beispiel_fixer.py', strip_consec_nl=True)
