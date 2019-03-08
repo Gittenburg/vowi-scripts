@@ -38,7 +38,7 @@ def handle(site, page):
 					if r['to'] == bsp['title']:
 						classes_per_title[r['from']] = classes
 						if not bsp['title'].startswith(page):
-							classes_per_title[r['from']].append('beispiel-alt')
+							classes_per_title[r['from']].append('beispiel-redirect')
 
 	idxpage = next(site.results(prop='revisions', titles=page, rvprop='content'))
 	code = mwparserfromhell.parse(idxpage['revisions'][0]['*'])
