@@ -66,12 +66,12 @@ def save(site, title, before, after, msg, ask=True, strip_consec_nl=False, **kwa
 	if type(msg) == list:
 		msg = ', '.join(msg)
 	print('msg: {}'.format(msg))
-	if strip_consec_nl:
-		after = re.sub('\n{3,}', '\n\n', str(after))
 	if ask and site.mode != api.Mode.NOASK:
 		diff(before, after)
 		if input() != '':
 			return
+	if strip_consec_nl:
+		after = re.sub('\n{3,}', '\n\n', str(after))
 	site.post('edit', title=title, text=str(after), summary=msg, token=site.token(), bot=1, **{'assert': 'bot'}, **kwargs, skipprompt=True)
 
 def moves(site, moves, reason, **kwargs):
