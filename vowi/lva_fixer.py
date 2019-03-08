@@ -8,6 +8,12 @@ from mwbot import set_param_value, set_param_name
 import vowi
 
 def handle_template(tpl, namespace=None):
+	if tpl.has('sprache'):
+		if tpl.get('sprache').value.strip().lower() in ('englisch', 'english'):
+			set_param_value(tpl, 'sprache', 'en')
+		if tpl.get('sprache').value.strip().lower() in ('deutsch', 'german'):
+			set_param_value(tpl, 'sprache', 'de')
+
 	if tpl.has('wann'):
 		if tpl.get('wann').value.strip() in ('Sommersemester', 'ss'):
 			set_param_value(tpl, 'wann', 'SS')
