@@ -47,7 +47,7 @@ def handle_index(site, index):
 				template.add('1', '\n'+str(angabe_div[0].contents).strip()+'\n', showkey=True)
 				code.remove(angabe_div[0])
 			else:
-				angabe_sec = code.get_sections(matches='Angabe')
+				angabe_sec = code.get_sections(matches='Angabe|Aufgabe')
 				if angabe_sec:
 					code.remove(angabe_sec[0].nodes[0])
 					template.add('1', '\n'+str(angabe_sec[0]).strip()+'\n', showkey=True)
