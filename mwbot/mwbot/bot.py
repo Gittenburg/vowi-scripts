@@ -60,14 +60,15 @@ def diff(before, after):
 	print('\n'.join(difflib.unified_diff(before.splitlines(), str(after).splitlines())))
 
 def save(site, title, before, after, msg, ask=True, strip_consec_nl=False, **kwargs):
-	if str(before) == str(after):
+	if before and str(before) == str(after):
 		return False
 	print('title:', title)
 	if type(msg) == list:
 		msg = ', '.join(msg)
 	print('msg: {}'.format(msg))
 	if ask and site.mode != api.Mode.NOASK:
-		diff(before, after)
+		if before:
+			diff(before, after)
 		if input() != '':
 			return
 	if strip_consec_nl:
