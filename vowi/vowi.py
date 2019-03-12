@@ -12,6 +12,10 @@ UNI_NAMESPACES = (
 	NS_SONSTIGE
 )
 
+LVA_TYPES = (
+	'AG', 'AU', 'EX', 'LU', 'PR', 'PS', 'SE', 'UE', 'VD', 'VO', 'VL', 'VU'
+)
+
 def get_current_semester():
 	today = datetime.datetime.today()
 	month = today.month
