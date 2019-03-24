@@ -63,11 +63,16 @@ def handle(site, page):
 
 if __name__ == '__main__':
 	parser = mwbot.get_argparser()
-	parser.add_argument('page')
+	parser.add_argument('page', nargs='?')
 	args = parser.parse_args()
 
 	site = mwbot.getsite('color_bsptable.py', args)
 	try:
-		handle(site, args.page)
+		if args.page:
+			handle(site, args.page)
+		else:
+			for title in site.get('askargs', conditions='Category:Beispielindexe|Ist veraltet::0', parameters='limit=9999')['query']['results']:
+				print(title)
+				handle(site, title)
 	except KeyboardInterrupt as e:
 		sys.exit()
