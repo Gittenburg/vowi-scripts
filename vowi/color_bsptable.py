@@ -5,6 +5,7 @@ import sys
 import mwparserfromhell
 
 import mwbot
+import bsp_fixer
 
 def handle(site, page):
 	result = site.complete(titles=page, generator='links', redirects=True, prop='revisions', rvprop='content', gpllimit='max')
@@ -73,6 +74,7 @@ if __name__ == '__main__':
 		else:
 			for title in site.get('askargs', conditions='Category:Beispielindexe|Ist veraltet::0', parameters='limit=9999')['query']['results']:
 				print(title)
+				bsp_fixer.handle(site, title)
 				handle(site, title)
 	except KeyboardInterrupt as e:
 		sys.exit()

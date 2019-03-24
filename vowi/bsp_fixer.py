@@ -7,7 +7,7 @@ from mwparserfromhell.nodes import Template, Text
 from mwparserfromhell.wikicode import Wikicode
 import vowi
 
-def handle_index(site, index):
+def handle(site, index):
 	src_ns = next(site.results(prop='info', titles=index))['ns']
 
 	for page in site.results(generator='allpages', gapprefix=index.split(':')[1] + '/Beispiel ', gaplimit='max', prop='revisions', rvprop='content', gapnamespace=src_ns):
@@ -61,4 +61,4 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	site = mwbot.getsite('bsp_fixer.py', args)
-	handle_index(site, args.index)
+	handle(site, args.index)
