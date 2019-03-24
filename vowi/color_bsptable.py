@@ -2,8 +2,6 @@
 import logging
 import sys
 
-import mwparserfromhell
-
 import mwbot
 import bsp_fixer
 
@@ -15,7 +13,7 @@ def handle(site, page):
 	for bsp in result['pages'].values():
 		classes = []
 		if not 'missing' in bsp:
-			bspcode = mwparserfromhell.parse(bsp['revisions'][0]['*'], skip_style_tags=True)
+			bspcode = mwbot.parse(bsp['revisions'][0]['*'])
 			if bspcode.filter_templates(matches=lambda t: t.name.matches('ungelöst')):
 				continue
 
@@ -42,7 +40,7 @@ def handle(site, page):
 							classes_per_title[r['from']].append('beispiel-redirect')
 
 	idxpage = next(site.results(prop='revisions', titles=page, rvprop='content'))
-	code = mwparserfromhell.parse(idxpage['revisions'][0]['*'])
+	code = mwbot.parse(idxpage['revisions'][0]['*'])
 
 	for table in code.filter_tags(matches=lambda t: t.tag.matches('table')):
 		table.attributes.clear()

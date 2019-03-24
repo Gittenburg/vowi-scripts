@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 import re
 
-import mwparserfromhell
-
 import mwbot
 from mwbot import set_param_value, set_param_name
 import vowi
@@ -54,7 +52,7 @@ def handle_template(tpl, namespace=None):
 
 def handle_page(page):
 	before = page['revisions'][0]['*']
-	code = mwparserfromhell.parse(before)
+	code = mwbot.parse(before)
 	templates = code.filter_templates(matches = lambda t: t.name.matches('LVA-Daten'))
 	if templates:
 		msg = handle_template(templates[0], page['ns'])

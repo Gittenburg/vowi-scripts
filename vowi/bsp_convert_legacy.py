@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import mwbot
-import mwparserfromhell
 import vowi
 
 if __name__ == '__main__':
@@ -11,7 +10,7 @@ if __name__ == '__main__':
 	site = mwbot.getsite('bsp_convert_legacy.py', args)
 
 	index = next(site.results(titles=args.page, prop='revisions', rvprop='content'))
-	code = mwparserfromhell.parse(index['revisions'][0]['*'])
+	code = mwbot.parse(index['revisions'][0]['*'])
 	moves = []
 
 	for iw in code.ifilter_wikilinks():

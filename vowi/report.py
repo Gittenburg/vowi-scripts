@@ -5,7 +5,6 @@ import collections
 import mwapi
 import mwbot
 import vowi
-import mwparserfromhell
 
 class LVADaten:
 	NAME = 'LVA-Daten'
@@ -111,7 +110,7 @@ def check_category(tplclass, *additional_classes):
 	if hasattr(tplclass, 'NAMESPACES'):
 		kwargs['gcmnamespace'] = mwapi.join(tplclass.NAMESPACES)
 	for page in catmembers_with_revs(tplclass.CATEGORY, **kwargs):
-		code = mwparserfromhell.parse(page['revisions'][0]['*'])
+		code = mwbot.parse(page['revisions'][0]['*'])
 		for error in check_template(code, tplclass):
 			errors[page['title']].append(error)
 		for ac in additional_classes:

@@ -3,11 +3,10 @@ import argparse
 
 import mwapi
 import mwbot
-import mwparserfromhell
 
 def handle_page(page):
 	orig = page['revisions'][0]['*']
-	code = mwparserfromhell.parse(orig)
+	code = mwbot.parse(orig)
 	for div in code.ifilter_tags(matches=lambda x: x.tag == 'div'):
 		code.replace(div, div.contents)
 	new = str(code).strip()
@@ -29,7 +28,7 @@ if __name__ == '__main__':
 
 	page = next(site.query('pages', prop='revisions', titles=overview, rvprop='content'))
 	orig = page['revisions'][0]['*']
-	code = mwparserfromhell.parse(orig)
+	code = mwbot.parse(orig)
 	templates = [mwbot.santitle(t.name) for t in code.ifilter_templates()]
 	undocumented_templates = []
 

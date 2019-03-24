@@ -2,7 +2,6 @@
 import re
 
 import mwbot
-import mwparserfromhell
 from mwparserfromhell.nodes import Template, Text
 from mwparserfromhell.wikicode import Wikicode
 import vowi
@@ -15,7 +14,7 @@ def handle(site, index):
 		if mwbot.is_redirect(orig):
 			continue
 
-		code = mwparserfromhell.parse(orig)
+		code = mwbot.parse(orig)
 		templates = code.filter_templates(matches=lambda x: x.name.matches('Beispiel') or x.name.matches('Bsp'))
 		if len(templates) > 0:
 			template = templates[0]

@@ -24,6 +24,10 @@ NS_CATEGORY = 14
 
 _REDIRECT_RE = re.compile('^\s*#(redirect|weiterleitung)\s*:?\s*\[\[.+\]\]', re.IGNORECASE)
 
+def parse(text, **kwargs):
+	kwargs.setdefault('skip_style_tags', True)
+	return mwparserfromhell.parse(text, **kwargs)
+
 def is_redirect(code):
 	return _REDIRECT_RE.match(code)
 

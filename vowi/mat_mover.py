@@ -3,8 +3,6 @@ import argparse
 import sys
 import re
 
-import mwparserfromhell
-
 import mwbot
 
 """
@@ -68,7 +66,7 @@ if __name__ == '__main__':
 	if ziel_dateien:
 		for datei in site.results(prop='revisions', pageids='|'.join(ziel_dateien), rvprop='content'):
 			orig = datei['revisions'][0]['*']
-			code = mwparserfromhell.parse(orig)
+			code = mwbot.parse(orig)
 			for link in code.ifilter_wikilinks():
 				link_target = mwbot.santitle(link.title)
 				san_dest = mwbot.santitle(args.src)
