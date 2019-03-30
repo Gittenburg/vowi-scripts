@@ -15,7 +15,7 @@ def handle(site, index):
 			continue
 
 		code = mwbot.parse(orig)
-		templates = code.filter_templates(matches=lambda x: x.name.matches('Beispiel') or x.name.matches('Bsp'))
+		templates = code.filter_templates(matches=lambda x: x.name.matches('Beispiel'))
 		if len(templates) > 0:
 			template = templates[0]
 		else:
@@ -25,6 +25,8 @@ def handle(site, index):
 
 		# legacy format handling
 		template.name = 'Beispiel'
+		if template.has('1') and not template.get('1').value.startswith('\n'):
+			template.get('1').value.insert(0, '\n')
 		if template.has('status'):
 			if str(template.get('status').value).strip() not in ('extern', 'Datei'):
 				print('unknown status: {}'.format(k))
