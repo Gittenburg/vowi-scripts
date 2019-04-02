@@ -4,6 +4,7 @@
 // @match https://vowi.fsinf.at/wiki/*
 // @match https://tiss.tuwien.ac.at/course/courseList.xhtml*
 // @description Does not work with Greasemonkey because of https://github.com/greasemonkey/greasemonkey/issues/2700
+// @version 1.0
 // ==/UserScript==
 
 if (location.host == 'vowi.fsinf.at') {
@@ -23,7 +24,7 @@ if (location.host == 'vowi.fsinf.at') {
 	if (params.get('title')) {
 		jsf.ajax.addOnEvent(function (data) {
 			if (data.status == 'success') {
-				document.getElementById('courseList:courseTitle').value = params.get('title')
+				document.getElementById('courseList:courseTitleInp').value = params.get('title')
 				document.getElementById('courseList:courseType').value = params.get('type')
 				document.getElementById('courseList:semFrom').value = '2015W'
 				document.getElementById('courseList:cSearchBtn').click()
@@ -31,7 +32,7 @@ if (location.host == 'vowi.fsinf.at') {
 		})
 		document.getElementById('courseList:quickSearchPanel').children[0].lastElementChild.click()
 	} else {
-		var titleInput = document.getElementById('courseList:courseTitle');
+		var titleInput = document.getElementById('courseList:courseTitleInp');
 		if (titleInput) {
 			document.getElementById('courseList:courseLecturer').focus()
 			window.find(titleInput.value);
