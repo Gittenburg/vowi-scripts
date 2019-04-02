@@ -1,0 +1,23 @@
+{
+	"name": "MissingFunctions",
+	"type": "parserhook",
+	"license-name": "MIT",
+	"author": "Gittenburg",
+	"version": "1.0",
+	"description": "Provides maptemplate and frametitle parser functions.",
+	"MessagesDirs": {
+		"ExampleExtension": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"MissingFunctionsHooks": "MissingFunctionsHooks.php"
+	},
+	"ExtensionMessagesFiles": {
+		"MissingFunctionsMagic": "MissingFunctions.i18n.php"
+	},
+	"Hooks": {
+		"ParserFirstCallInit": "MissingFunctionsHooks::onParserFirstCallInit"
+	},
+	"manifest_version": 1
+}
