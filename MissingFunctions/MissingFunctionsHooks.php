@@ -5,7 +5,7 @@ class MissingFunctionsHooks {
 		$parser->setFunctionHook( 'frametitle', [ self::class, 'renderFrameTitle' ], SFH_OBJECT_ARGS);
 	}
 
-	/* Parser function to split a string and pass the parts as parameters to a template. */
+	/* Parser function to split a string and pass each part as first parameter to a given template. */
 	public static function renderMapTemplate( Parser $parser, $text, $template, $insep='', $outsep='', $userparam='') {
 		if (empty($text))
 			return '';
