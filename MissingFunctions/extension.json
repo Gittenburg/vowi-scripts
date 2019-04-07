@@ -3,7 +3,8 @@
 	"type": "parserhook",
 	"license-name": "MIT",
 	"author": "Gittenburg",
-	"version": "1.0",
+	"url": "https://github.com/Gittenburg/vowi/tree/master/MissingFunctions",
+	"version": "1.0.1",
 	"description": "Provides maptemplate and frametitle parser functions.",
 	"MessagesDirs": {
 		"ExampleExtension": [
