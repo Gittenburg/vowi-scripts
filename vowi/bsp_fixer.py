@@ -31,9 +31,6 @@ def handle(site, index):
 			if str(template.get('status').value).strip() not in ('extern', 'Datei'):
 				print('unknown status: {}'.format(k))
 
-		if template.has('gekommen'):
-			template.get('gekommen').value = str(template.get('gekommen').value).replace('/', ';')
-
 		if template.has('1'):
 			if str(template.get('1').value).strip() == 'teils':
 				template.add('teils', '')

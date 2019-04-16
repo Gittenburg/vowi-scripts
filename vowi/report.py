@@ -73,7 +73,6 @@ class Beispiel:
 	PARAMS = set((
 	'1',
 	'status',
-	'gekommen',
 	'teils'
 	))
 
