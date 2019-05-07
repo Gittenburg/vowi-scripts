@@ -11,7 +11,7 @@ def handle(site, index):
 
 	for page in site.results(generator='allpages', gapprefix=index.split(':')[1] + '/Beispiel ', gaplimit='max', prop='revisions', rvprop='content', gapnamespace=src_ns):
 		orig = page['revisions'][0]['*']
-		if mwbot.is_redirect(orig):
+		if mwbot.parse_redirect(orig):
 			continue
 
 		code = mwbot.parse(orig)
