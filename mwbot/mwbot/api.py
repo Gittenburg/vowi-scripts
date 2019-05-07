@@ -91,10 +91,12 @@ class Site():
 
 		while resp is None or 'continue' in resp:
 			resp = self.get('query', **kwargs)
-			_dmerge(resp['query'], data)
+			if 'query' in resp:
+				_dmerge(resp['query'], data)
 
 			if 'batchcomplete' in resp:
-				yield data
+				if data: # a response can be just batchcomplete
+					yield data
 				data = {}
 
 			if 'continue' in resp:
@@ -104,6 +106,7 @@ class Site():
 		return self.get('query', meta='tokens', type=type)['query']['tokens'][type+'token']
 
 	def login(self, username, password):
+		self.session.auth = (username, password) # for private wikis
 		resp = self.post('login', lgname=username, lgpassword=password, lgtoken=self.token('login'), skipprompt=True)
 		assert resp['login']['result'] == 'Success'
 		self.userid = resp['login']['lguserid']
