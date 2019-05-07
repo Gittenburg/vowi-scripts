@@ -4,8 +4,10 @@ import re
 import mwbot
 from mwbot import set_param_value, set_param_name
 import vowi
+from mwparserfromhell.nodes import Template, Text
+from mwparserfromhell.wikicode import Wikicode
 
-def handle_template(tpl, namespace=None):
+def handle_template(tpl, code, namespace=None):
 	if tpl.has('sprache'):
 		if tpl.get('sprache').value.strip().lower() in ('englisch', 'english'):
 			set_param_value(tpl, 'sprache', 'en')
@@ -22,29 +24,32 @@ def handle_template(tpl, namespace=None):
 	if tpl.has('tiss'):
 		if tpl.get('tiss').value.strip() == '1234567890':
 			tpl.remove('tiss')
-	if tpl.has('institut'):
-		# [http://www.example.com/institutsowieso Institut Sowieso]
-		if not tpl.has('abteilung'):
-			if not '[' in tpl.get('institut').value:
-				set_param_name(tpl, 'institut', 'abteilung')
-			else:
-				val = str(tpl.get('institut').value)
-				m = re.search('E?0?\d\d\d([-/]\d+)?', val)
-				if m:
-					match = m.group().replace('-', '/')
-					if match in abteilungen:
-						tpl.get('institut').value = abteilungen[match].split(':')[1]
-						tpl.get('institut').name = 'abteilung'
-	if tpl.has('abteilung'):
-		set_param_value(tpl, 'abteilung', ';'.join([s.split('#')[0] for s in str(tpl.get('abteilung').value).replace('_', ' ').split(';')]))
+
+	archived = False
+	successor = None
+	if tpl.has('veraltet'):
+		archived = True
+		tpl.remove('veraltet')
+	if tpl.has('nachfolger'):
+		archived = True
+		successor = tpl.get('nachfolger').value.strip()
+		tpl.remove('nachfolger')
+	for t in code.ifilter_templates(matches = lambda t: t.name.matches('Veraltet')):
+		archived = True
+		code.remove(t)
+	archivedFlag = code.filter_templates(matches = lambda t: t.name.matches('Archiv'))
+	if archived and not archivedFlag:
+		tpl = Template(Wikicode([Text('Archiv')]))
+		if successor:
+			tpl.add('nachfolger', successor)
+		code.insert(0, tpl)
+		code.insert(1, '\n\n')
 
 	if tpl.has('zuordnungen'):
 		rels = tpl.get('zuordnungen').value.filter_templates()
 		for rel in rels:
 			if rel.has('2'):
 				rel.get('2').value = str(rel.get('2').value).replace('–', '-')
-			elif rel.has('wahl'):
-				rel.remove('wahl')
 		rels.sort(key=lambda x: x.get('1'))
 		tpl.get('zuordnungen').value = '\n' + '\n'.join([' '*4 + str(r) for r in rels]) + '\n'
 
@@ -55,8 +60,8 @@ def handle_page(page):
 	code = mwbot.parse(before)
 	templates = code.filter_templates(matches = lambda t: t.name.matches('LVA-Daten'))
 	if templates:
-		msg = handle_template(templates[0], page['ns'])
-		mwbot.save(site, page['title'], before, str(code), site.msg(msg))
+		msg = handle_template(templates[0], code, page['ns'])
+		mwbot.save(site, page['title'], before, str(code), site.msg(msg), strip_consec_nl=True)
 
 if __name__ == '__main__':
 	parser = mwbot.get_argparser()
