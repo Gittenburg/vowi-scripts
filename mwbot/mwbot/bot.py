@@ -22,14 +22,18 @@ NS_TEMPLATE = 10
 NS_HELP = 12
 NS_CATEGORY = 14
 
-_REDIRECT_RE = re.compile('^\s*#(redirect|weiterleitung)\s*:?\s*\[\[.+\]\]', re.IGNORECASE)
+_REDIRECT_RE = re.compile('^\s*#(redirect|weiterleitung)\s*:?\s*\[\[([^]|]+)\|?([^]]*)\]\]', re.IGNORECASE)
 
 def parse(text, **kwargs):
 	kwargs.setdefault('skip_style_tags', True)
 	return mwparserfromhell.parse(text, **kwargs)
 
-def is_redirect(code):
-	return _REDIRECT_RE.match(code)
+def parse_redirect(code):
+	match = _REDIRECT_RE.match(code)
+	if match:
+		return (match.group(2).strip(), match.group(3).strip())
+	else:
+		return None
 
 def add_pagesel_args(parser, categorydefault=None):
 	parser.add_argument('page', nargs='?')
@@ -70,6 +74,7 @@ def save(site, title, before, after, msg, ask=True, strip_consec_nl=False, **kwa
 	if type(msg) == list:
 		msg = ', '.join(msg)
 	print('msg: {}'.format(msg))
+	after = after.strip()
 	if ask and site.mode != api.Mode.NOASK:
 		if before:
 			diff(before, after)
