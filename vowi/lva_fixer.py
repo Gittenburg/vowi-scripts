@@ -68,12 +68,4 @@ if __name__ == '__main__':
 	mwbot.add_pagesel_args(parser, categorydefault='LVAs')
 	args = parser.parse_args()
 	site = mwbot.getsite('lva_fixer.py', args)
-
-	abteilungen = {} # id to title
-	for title, abt in site.get('askargs', conditions='Kategorie:Abteilungen', printouts='Hat ID|Hatte ID', parameters='limit=999')['query']['results'].items():
-		if abt['printouts']['Hat ID']:
-			abteilungen[abt['printouts']['Hat ID'][0]] = title
-		if abt['printouts']['Hatte ID']:
-			abteilungen[abt['printouts']['Hatte ID'][0]] = title
-
 	mwbot.handle_pagesel_args(site, args, vowi.UNI_NAMESPACES, handle_page)
