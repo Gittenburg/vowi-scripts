@@ -16,10 +16,8 @@ class LVADaten:
 		'alias',
 		'ects',
 		'homepage',
-		'nachfolger',
 		'sprache',
-		'tiss',
-		'veraltet',
+		'id',
 		'vortragende',
 		'wann',
 		'zuordnungen'
