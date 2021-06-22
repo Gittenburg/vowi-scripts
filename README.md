@@ -44,9 +44,3 @@ password=Your Password
 Scripts can then be run as follows:
 
 	$ ACCT=your.ini ./script.py
-
-## Userscripts
-
-Are written in JavaScript and require a userscript manager. [Violentmonkey](https://violentmonkey.github.io/) is recommended.
-
-* `vowi2tiss-search.user.js` -- a userscript to add TISS search links to VoWi LVA pages (does not work with Greasemonkey)
